@@ -229,8 +229,10 @@
       const a = num($("a").value);
       const b = num($("b").value);
       const c = num($("c").value);
+      
+      const xRaw = (a / 0.958 + b / 0.803) / 2;
+      const x = Math.round(xRaw);
 
-      const x = (a / 0.958 + b / 0.803) / 2;
 
       let y = NaN;
       let note = "";
