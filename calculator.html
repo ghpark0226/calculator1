@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>수강신청 실질 경쟁률 계산기</title>
+  <style>
+    :root {
+      --bg: #ffffff;      /* white background */
+      --card: #f9fafb;    /* light gray */
+      --muted: #6b7280;   /* gray-500 */
+      --text: #111827;    /* gray-900 */
+      --accent: #2563eb;  /* blue-600 */
+      --ring: #3b82f6;    /* blue-500 */
+      --danger: #dc2626;  /* red-600 */
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+    header h1 {
+      margin: 0 0 6px 0;
+      font-size: 22px;
+      letter-spacing: .2px;
+    }
+    header p {
+      margin: 0 0 22px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    @media (min-width: 720px) {
+      .grid-2 { grid-template-columns: 1fr 1fr; gap: 16px; }
+      .grid-3 { grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .input {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 12px 14px;
+      transition: border .15s, box-shadow .15s;
+    }
+    .input:focus-within {
+      border-color: var(--ring);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
+    }
+    .input input {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      outline: none;
+      color: var(--text);
+      font-size: 16px;
+      appearance: textfield;
+    }
+    .input input::-webkit-outer-spin-button,
+    .input input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    button {
+      cursor: pointer;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      transition: transform .05s ease, background .15s ease, border .15s ease;
+    }
+    button.primary {
+      border-color: var(--ring);
+      background: linear-gradient(180deg, rgba(59,130,246,0.15), rgba(59,130,246,0.05));
+    }
+    button:hover { border-color: var(--accent); }
+    button:active { transform: translateY(1px); }
+    .results {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+    .stat {
+      padding: 14px;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1px dashed #d1d5db;
+    }
+    .stat .k {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .stat .v {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .muted {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    .warn { color: var(--danger); font-weight: 600; }
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+    .footnote{
+      margin-top:12px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>수강신청 실질 경쟁률 계산기</h1>
+      <p>에타와 노크로 시간표를 만드는 인원의 비율을 고려한 실질적인 경쟁자 수 및 경쟁률 계산기입니다.  
+      </p>
+    </header>
+
+    <section class="card">
+      <div class="grid grid-3">
+        <div>
+          <label for="a">에타 인원 수 (a)</label>
+          <div class="input"><input id="a" type="number" min="0" step="any" placeholder="예: 120" inputmode="decimal" /></div>
+        </div>
+        <div>
+          <label for="b">노크 인원 수 (b)</label>
+          <div class="input"><input id="b" type="number" min="0" step="any" placeholder="예: 75" inputmode="decimal" /></div>
+        </div>
+        <div>
+          <label for="c">강의 정원 (c)</label>
+          <div class="input"><input id="c" type="number" min="0" step="any" placeholder="예: 60" inputmode="decimal" /></div>
+        </div>
+      </div>
+
+      <div class="btns">
+        <button class="primary" id="calcBtn">계산</button>
+        <button id="clearBtn">초기화</button>
+      </div>
+
+      <div id="msg" class="muted" aria-live="polite"></div>
+
+      <div class="results grid grid-2" aria-live="polite">
+        <div class="stat">
+          <div class="k">경쟁자 수 (x)</div>
+          <div class="v" id="x">—</div>
+        </div>
+        <div class="stat">
+          <div class="k">경쟁률 (y = x / c)</div>
+          <div class="v" id="y">—</div>
+        </div>
+      </div>
+
+      <footer>
+        수식: <code>x = (a / 0.958 + b / 0.803) / 2</code>, <code>y = x / c</code>
+      </footer>
+    </section>
+
+    <div class="footnote">
+      이 계산기는 2025학년 2학기, 연세대학교(서울)를 대상으로 합니다.<br><br>
+      다음의 이유로 조금의 오차가 발생할 수 있습니다.<br>
+      1. 표본의 크기가 71명으로 제한적입니다.<br>
+      2-1. 표본은 에브리타임을 사용하는 전체 인원 중 추출되었으므로, 학년과 학과에 따라 모집단과 표본 간 특성의 차이가 비교적 클 수 있습니다.<br>
+      2-2. 에브리타임을 사용하지 않는 인원은 설문조사에 참여할 수 없었으므로 노크로만 시간표를 만든 인원의 수가 과소평가되었을 수 있습니다.<br>
+      3. 에브리타임과 노크 중 어느것에서도 시간표를 만들지 않고 수강신청에 참여하는 소수의 학생들은 고려되지 않았습니다.<br><br>
+      마지막 업데이트: 2025. 08. 25. 19:00<br>
+      만든이: @9uuhyuk
+    </div>
+  </div>
+
+  <script>
+    const num = (v) => {
+      const n = parseFloat(String(v).replace(/,/g, ""));
+      return Number.isFinite(n) ? n : 0;
+    };
+
+    const fmt = (v) => {
+      if (!Number.isFinite(v)) return "—";
+      const s = v.toFixed(3);
+      return parseFloat(s).toString();
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const inputs = ["a","b","c"].map($);
+
+    function compute() {
+      const a = num($("a").value);
+      const b = num($("b").value);
+      const c = num($("c").value);
+
+      const x = (a / 0.958 + b / 0.803) / 2;
+
+      let y = NaN;
+      let note = "";
+      if (c > 0) {
+        y = x / c;
+      } else if (c === 0) {
+        note = "<span class='warn'>정원이 0이면 경쟁률을 계산할 수 없습니다.</span>";
+      } else {
+        note = "<span class='warn'>정원(c)은 0 이상이어야 합니다.</span>";
+      }
+
+      $("x").textContent = fmt(x);
+      $("y").textContent = Number.isFinite(y) ? fmt(y) : "—";
+      $("msg").innerHTML = note;
+
+      const url = new URL(location.href);
+      url.searchParams.set("a", a);
+      url.searchParams.set("b", b);
+      url.searchParams.set("c", c);
+      history.replaceState(null, "", url);
+    }
+
+    function clearAll() {
+      inputs.forEach(el => el.value = "");
+      $("x").textContent = "—";
+      $("y").textContent = "—";
+      $("msg").textContent = "";
+      const url = new URL(location.href);
+      ["a","b","c"].forEach(k => url.searchParams.delete(k));
+      history.replaceState(null, "", url);
+      inputs[0].focus();
+    }
+
+    function loadFromQuery() {
+      const url = new URL(location.href);
+      ["a","b","c"].forEach(k => {
+        const v = url.searchParams.get(k);
+        if (v !== null) $(k).value = v;
+      });
+      if (["a","b","c"].some(k => url.searchParams.get(k) !== null)) compute();
+    }
+
+    $("calcBtn").addEventListener("click", compute);
+    $("clearBtn").addEventListener("click", clearAll);
+
+    let t;
+    inputs.forEach(el => {
+      el.addEventListener("input", () => {
+        clearTimeout(t);
+        t = setTimeout(compute, 120);
+      });
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") compute();
+      });
+    });
+
+    loadFromQuery();
+  </script>
+</body>
+</html>
