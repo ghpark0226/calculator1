@@ -176,7 +176,6 @@
       </div>
 
       <div class="btns">
-        <button class="primary" id="calcBtn">계산</button>
         <button id="clearBtn">초기화</button>
       </div>
 
@@ -240,7 +239,7 @@
       } else if (c === 0) {
         note = "<span class='warn'>정원이 0이면 경쟁률을 계산할 수 없습니다.</span>";
       } else {
-        note = "<span class='warn'>정원(c)은 0 이상이어야 합니다.</span>";
+        note = "<span class='warn'>정원(c)은 1 이상이어야 합니다.</span>";
       }
 
       $("x").textContent = fmt(x);
@@ -274,7 +273,6 @@
       if (["a","b","c"].some(k => url.searchParams.get(k) !== null)) compute();
     }
 
-    $("calcBtn").addEventListener("click", compute);
     $("clearBtn").addEventListener("click", clearAll);
 
     let t;
