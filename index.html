@@ -233,7 +233,6 @@
       const xRaw = (a / 0.958 + b / 0.803) / 2;
       const x = Math.round(xRaw);
 
-
       let y = NaN;
       let note = "";
       if (c > 0) {
@@ -245,7 +244,7 @@
       }
 
       $("x").textContent = fmt(x);
-      $("y").textContent = Number.isFinite(y) ? fmt(y) : "—";
+      $("y").textContent = Number.isFinite(y) ? y.toFixed(1) : "—";
       $("msg").innerHTML = note;
 
       const url = new URL(location.href);
